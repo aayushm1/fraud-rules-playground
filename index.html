@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fraud Rules Playground — Stop fraud without stopping customers</title>
+  <meta name="description" content="A product case study and working prototype: a no-code fraud rules simulator that lets risk teams back-test rules on historical payments before going live." />
+  <meta property="og:title" content="Fraud Rules Playground — a fintech product case study" />
+  <meta property="og:description" content="Back-test fraud rules on a month of payments. See fraud caught vs good customers blocked, live." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>" />
+</head>
+<body>
+  <header class="nav">
+    <div class="container nav-inner">
+      <a href="#top" class="brand"><span class="brand-mark">🛡️</span> Fraud Rules Playground</a>
+      <nav class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#approach">Approach</a>
+        <a href="#prototype">Prototype</a>
+        <a href="#results">Results</a>
+        <a href="https://github.com/aayushm1/fraud-rules-playground/blob/main/docs/CONCEPTS.md" class="nav-ghost">Concepts</a>
+        <a href="https://github.com/aayushm1/fraud-rules-playground" class="btn btn-sm">GitHub ↗</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Fintech · Risk &amp; Payments · Product case study</span>
+          <h1>Stop fraud <span class="accent">without stopping customers.</span></h1>
+          <p class="lede">
+            A no-code simulator that lets risk teams <strong>back-test fraud rules on last month’s payments</strong>
+            before they go live, so every rule change shows its trade-off between fraud caught and good customers blocked.
+          </p>
+          <div class="hero-cta">
+            <a href="#prototype" class="btn">Try the live prototype →</a>
+            <a href="#problem" class="btn btn-ghost">Read the case study</a>
+          </div>
+          <p class="fine">Built with simulated data for a fictional payments company, <em>Kavach Pay</em>. No real customer data is used.</p>
+        </div>
+        <div class="hero-card" id="heroStats">
+          <div class="hero-card-title">Legacy rules → Tuned risk score <span class="muted">(same 10,000 payments)</span></div>
+          <div class="hero-stat"><span class="hs-label">Fraud caught</span><span class="hs-val" data-hero="recall">–</span></div>
+          <div class="hero-stat"><span class="hs-label">Good customers wrongly blocked</span><span class="hs-val" data-hero="blocked">–</span></div>
+          <div class="hero-stat"><span class="hs-label">Total cost of fraud</span><span class="hs-val" data-hero="cost">–</span></div>
+          <div class="hero-stat"><span class="hs-label">Time to test a rule change</span><span class="hs-val">3 weeks → <b>minutes</b></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 1. PROBLEM ============ -->
+    <section id="problem" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="step-tag">01 · Problem</span>
+          <h2>Fraud teams are flying blind, and good customers pay for it.</h2>
+          <p class="section-sub">
+            Digital payments in India have grown quickly, and fraud has grown with them. Most mid-size payment companies still
+            defend themselves with hard-coded “if-this-then-block” rules. Nobody can test those rules before they ship, and nobody
+            measures them after.
+          </p>
+        </div>
+
+        <div class="cards-3">
+          <div class="card pain">
+            <div class="pain-icon">🚫</div>
+            <h3>Good customers get blocked</h3>
+            <p>Blunt rules like <em>“block anything above ₹25,000”</em> or <em>“block all international”</em> decline genuine customers.
+              Industry research widely reports that <strong>false declines cost merchants more than fraud itself</strong>, and many customers who are declined never come back.</p>
+          </div>
+          <div class="card pain">
+            <div class="pain-icon">🐢</div>
+            <h3>Rule changes take weeks</h3>
+            <p>Every tweak is a Jira ticket for engineering. During a fraud attack, the risk team waits 2–3 weeks for a threshold change,
+              then switches on a blanket block that hurts conversion.</p>
+          </div>
+          <div class="card pain">
+            <div class="pain-icon">🎯</div>
+            <h3>No one knows which rules work</h3>
+            <p>Rules pile up over years. No one can answer <em>“what does this rule actually catch, and how many good users does it hit?”</em>
+              So rules are never retired, and the noise keeps growing.</p>
+          </div>
+        </div>
+
+        <div class="persona">
+          <div class="persona-avatar">PS</div>
+          <div>
+            <p class="quote">“When fraud spikes I can only turn rules on or off and hope. I find out whether I over-blocked when the
+              merchant escalates, or when chargebacks arrive 45 days later.”</p>
+            <p class="persona-meta"><strong>Priya S., Risk Operations Lead</strong> · illustrative persona, built from public industry pain points</p>
+          </div>
+        </div>
+
+        <div class="problem-statement">
+          <span class="ps-label">Problem statement</span>
+          <p><strong>How might we</strong> let risk teams design, test and safely ship fraud rules on their own, so they
+            <strong>catch more fraud while blocking fewer genuine customers</strong>, and can measure the trade-off before going live?</p>
+        </div>
+
+        <div class="two-sided">
+          <div class="side side-bad">
+            <h4>Too loose → fraud losses</h4>
+            <ul><li>Stolen money + chargeback fees</li><li>Scheme penalties for high chargeback ratios</li><li>Regulatory &amp; reputational risk</li></ul>
+          </div>
+          <div class="side-vs">vs</div>
+          <div class="side side-warn">
+            <h4>Too tight → false declines</h4>
+            <ul><li>Lost sales and merchant revenue</li><li>Customers churn to competitors</li><li>Overloaded manual-review teams</li></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2. APPROACH ============ -->
+    <section id="approach" class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <span class="step-tag">02 · Approach</span>
+          <h2>Turn fraud rules into a product decision you can measure.</h2>
+          <p class="section-sub">I treated rule management as a product problem: understand the users, size the cost of each mistake,
+            then design a tool that makes the trade-off visible.</p>
+        </div>
+
+        <div class="timeline">
+          <div class="tl-step"><span class="tl-num">1</span><h4>Discover</h4>
+            <p>Mapped the jobs-to-be-done of risk analysts, risk leads and merchant success. The top need is to <em>change a rule with confidence, quickly</em>.</p></div>
+          <div class="tl-step"><span class="tl-num">2</span><h4>Diagnose</h4>
+            <p>Audited the legacy rule set against labelled history. Single-signal hard blocks were the main cause of false declines, and they missed fraud that combines several weak signals.</p></div>
+          <div class="tl-step"><span class="tl-num">3</span><h4>Design</h4>
+            <p>Replaced “any rule blocks” with a <strong>points-based risk score</strong> and three outcomes: <em>allow · review · block</em>. Each rule adds evidence, and no single rule decides on its own.</p></div>
+          <div class="tl-step"><span class="tl-num">4</span><h4>Validate</h4>
+            <p>Every change is <strong>back-tested</strong> on 30 days of labelled payments and priced in rupees: fraud loss + false-decline cost + review cost.</p></div>
+        </div>
+
+        <div class="flow">
+          <div class="flow-box"><span class="flow-title">Payment signals</span>
+            <span class="chip">Velocity</span><span class="chip">Failed OTP</span><span class="chip">New device</span><span class="chip">New payee</span><span class="chip">Location</span><span class="chip">Amount</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box"><span class="flow-title">Weighted rules</span><span class="flow-mono">score = Σ points of rules that fire</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-box flow-out">
+            <span class="dec dec-allow">Allow</span><span class="flow-mono">score &lt; review</span>
+            <span class="dec dec-review">Review</span><span class="flow-mono">review ≤ score &lt; block</span>
+            <span class="dec dec-block">Block</span><span class="flow-mono">score ≥ block</span>
+          </div>
+        </div>
+
+        <div class="insight">
+          <span class="insight-label">Key insight</span>
+          <p>Fraud rarely looks like <em>one</em> strong signal. It looks like <strong>several weak signals together</strong>: a new device, plus failed OTPs, plus a first payment to a new payee.
+            Hard blocks on single signals are noisy. Combining signals into a score is precise.</p>
+        </div>
+
+        <div class="cards-3">
+          <div class="card mini"><h4>Success metric (North Star)</h4><p><strong>Total cost of fraud</strong> (₹) = fraud losses + false-decline cost + review cost. One number, so teams stop optimising only one side.</p></div>
+          <div class="card mini"><h4>Guardrails</h4><p>False-decline rate &lt; 1% · Review queue within analyst capacity · Fraud caught ≥ legacy for every fraud type.</p></div>
+          <div class="card mini"><h4>Non-goals (v1)</h4><p>Real-time ML models, case management, and live production deployment. v1 proves the value of simulation first.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3. PROTOTYPE ============ -->
+    <section id="prototype" class="section">
+      <div class="container">
+        <div class="section-head">
+          <span class="step-tag">03 · Prototype</span>
+          <h2>The playground: change a rule, see the impact instantly.</h2>
+          <p class="section-sub">Every change is re-scored live against <span data-dataset-size>10,000</span> simulated payments from September 2026
+            (<span data-fraud-count>–</span> confirmed fraud). Start from a preset, then adjust toggles, thresholds and weights.</p>
+        </div>
+
+        <div class="toolbar">
+          <div class="presets" id="presets"></div>
+          <div class="toolbar-actions">
+            <button class="btn btn-ghost btn-sm" id="copyConfig" title="Copy rule configuration as JSON">⧉ Copy config</button>
+          </div>
+        </div>
+
+        <div class="playground">
+          <!-- Controls -->
+          <aside class="panel controls">
+            <div class="panel-title">Decision thresholds</div>
+            <div class="threshold">
+              <label>Send to manual review at score ≥ <b id="reviewVal"></b></label>
+              <input type="range" id="reviewSlider" min="5" max="150" step="5" />
+            </div>
+            <div class="threshold">
+              <label>Block at score ≥ <b id="blockVal"></b></label>
+              <input type="range" id="blockSlider" min="5" max="150" step="5" />
+            </div>
+
+            <div class="panel-title">Rules <span class="muted">(points added when a rule fires)</span></div>
+            <div id="rulesList"></div>
+
+            <details class="assumptions">
+              <summary>Cost assumptions</summary>
+              <div id="costInputs"></div>
+            </details>
+          </aside>
+
+          <!-- Outputs -->
+          <div class="outputs">
+            <div class="kpis" id="kpis"></div>
+
+            <div class="panel">
+              <div class="panel-title">Trade-off curve <span class="muted">· share of fraud flagged vs share of good customers hit, as you move the threshold</span></div>
+              <div id="chart" class="chart"></div>
+              <div class="legend"><span><i class="lg lg-curve"></i>Your rule set</span><span><i class="lg lg-you"></i>Your current thresholds</span><span><i class="lg lg-legacy"></i>Legacy rules</span></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Rule performance <span class="muted">· which rules earn their place?</span></div>
+              <div class="table-wrap"><table class="tbl" id="ruleTable"></table></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Fraud caught by type</div>
+              <div id="typeBars" class="type-bars"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">Transaction explorer <span class="muted">· every decision explains itself</span></div>
+              <div class="filters" id="filters"></div>
+              <div class="table-wrap"><table class="tbl tbl-tx" id="txTable"></table></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 4. RESULTS ============ -->
+    <section id="results" class="section section-alt">
+      <div class="container">
+        <div class="section-head">
+          <span class="step-tag">04 · Results</span>
+          <h2>More fraud caught, far fewer good customers blocked.</h2>
+          <p class="section-sub">Legacy rules vs the tuned risk score, back-tested on the same month of payments.
+            The prototype computes these numbers live; they are not hard-coded.</p>
+        </div>
+
+        <div class="result-big" id="resultBig"></div>
+
+        <div class="panel">
+          <div class="table-wrap"><table class="tbl tbl-results" id="resultTable"></table></div>
+        </div>
+
+        <div class="cards-2">
+          <div class="card">
+            <h3>What worked</h3>
+            <ul class="ticks">
+              <li><strong>Behaviour beats size.</strong> Velocity and failed-OTP signals have far higher lift than “high amount”, which mostly fires on genuine big-ticket buyers.</li>
+              <li><strong>A review band is cheap insurance.</strong> About 13 reviews a day absorbs uncertain cases instead of hard-blocking them.</li>
+              <li><strong>One cost metric aligns teams.</strong> Risk and growth argue about the same rupee number, not competing KPIs.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>What rules still can’t do (honest limits)</h3>
+            <ul class="crosses">
+              <li><strong>Social-engineering scams</strong> look like genuine payments made by the real user on their own device. Rules catch only about 60%; this needs payee-risk intelligence and in-app warnings.</li>
+              <li><strong>Synthetic accounts</strong> need identity and consortium signals beyond transaction data.</li>
+              <li><strong>Labels arrive late:</strong> chargebacks land 30–90 days after the payment, so back-tests run on matured data.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="roadmap">
+          <h3>Roadmap</h3>
+          <div class="rm-grid">
+            <div class="rm"><span class="rm-tag">Next</span><h4>Shadow mode</h4><p>Run a new rule on live traffic and log its decisions without acting on them, before it goes live.</p></div>
+            <div class="rm"><span class="rm-tag">Next</span><h4>Champion / challenger</h4><p>Send 5% of traffic to a candidate rule set and compare it with the current one on live outcomes.</p></div>
+            <div class="rm"><span class="rm-tag">Later</span><h4>Step-up instead of block</h4><p>Ask for extra authentication (OTP or biometric) in the uncertain band instead of declining.</p></div>
+            <div class="rm"><span class="rm-tag">Later</span><h4>ML score as a signal</h4><p>Feed an ML model’s probability in as one more weighted signal, so rules stay explainable.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>Fraud Rules Playground</strong> · a product case study by <a href="https://github.com/aayushm1">Aayush Mehan</a>
+        <p class="fine">Kavach Pay is fictional. All transactions are synthetic, generated deterministically in your browser (seed 20260901).
+          Costs and rates are illustrative assumptions, documented in <a href="https://github.com/aayushm1/fraud-rules-playground/blob/main/docs/CONCEPTS.md">CONCEPTS.md</a>.</p>
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/aayushm1/fraud-rules-playground/blob/main/docs/PRD.md">PRD</a><a href="https://github.com/aayushm1/fraud-rules-playground/blob/main/docs/DECISIONS.md">Decision log</a><a href="https://github.com/aayushm1/fraud-rules-playground/blob/main/docs/CONCEPTS.md">Concepts guide</a>
+      </div>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+  <script src="assets/engine.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
